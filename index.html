@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>青龙脚本管理系统</title>
+    <title>脚本管理系统</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@4.5.1/dist/vue-router.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/giscus@1.6.0/+esm"></script>
 
     <style>
         .loading {
@@ -25,286 +29,256 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-<!-- Navigation -->
-<nav class="bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <div class="flex-shrink-0 flex items-center">
-                    <a href="/" class="text-2xl font-bold text-blue-600">青龙脚本管理系统</a>
-                </div>
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a href="#" id="home-link" class="border-b-2 border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
-                        首页
-                    </a>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center">
+                            <a href="/" class="text-2xl font-bold text-blue-600">脚本管理系统</a>
+                        </div>
+                        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                            <a href="#" id="home-link" class="border-b-2 border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                                首页
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <a href="https://github.com/other-blowsnow/qinglong-scripts/issues/new?template=%E6%96%B0%E8%84%9A%E6%9C%AC.md"
+                           target="_blank"
+                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            提交新脚本
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center">
-                <a href="https://github.com/other-blowsnow/qinglong-scripts/issues/new?template=%E6%96%B0%E8%84%9A%E6%9C%AC.md"
-                   target="_blank"
-                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    提交新脚本
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
+        </nav>
 
-<!-- Main Content -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <!-- Home page -->
-    <div id="home-page" class="bg-white shadow rounded-lg p-6">
-        <div class="mb-6">
-            <label for="search" class="sr-only">搜索脚本</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <!-- Home page -->
+            <div v-if="page === 'home'" id="home-page" class="bg-white shadow rounded-lg p-6">
+                <div class="mb-6">
+                    <label class="sr-only">搜索脚本</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input id="search-input" v-model="searchProjectTerm"
+                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="搜索脚本名称或关键词" type="search">
+                    </div>
+                </div>
+
+                <div v-if="projects.length === 0" id="loading" class="flex justify-center py-12">
+                    <div class="loading"></div>
+                    <span class="ml-2 text-gray-700">正在加载脚本列表...</span>
+                </div>
+
+                <div v-else-if="filteredProjects.length > 0" id="scripts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="script in filteredProjects" class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div class="p-4">
+                            <div class="flex items-center">
+                                <img class="h-5 w-5" :src="script.icon || './assets/icon/empty-project.png'" alt="">
+                                <h3 class="ml-2 text-lg font-medium text-gray-900 truncate" :title="script.name">{{script.name}}</h3>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-500 truncate" :title="script.desc">{{script.desc}}</p>
+                            <div class="mt-4">
+                                <button class="view-script w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                        @click="showProjectDetails(script)">
+                                    查看详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else id="no-results" class="hidden text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">没有找到相关脚本</h3>
+                    <p class="mt-1 text-sm text-gray-500">请尝试其他关键词进行搜索。</p>
                 </div>
-                <input id="search-input" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="搜索脚本名称或关键词" type="search">
             </div>
-        </div>
 
-        <div id="loading" class="flex justify-center py-12">
-            <div class="loading"></div>
-            <span class="ml-2 text-gray-700">正在加载脚本列表...</span>
-        </div>
-
-        <div id="scripts-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Scripts will be loaded here -->
-        </div>
-
-        <div id="no-results" class="hidden text-center py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">没有找到相关脚本</h3>
-            <p class="mt-1 text-sm text-gray-500">请尝试其他关键词进行搜索。</p>
-        </div>
-    </div>
-
-    <!-- Script details page -->
-    <div id="script-details-page" class="hidden bg-white shadow rounded-lg p-6">
-        <button id="back-button" class="mb-6 inline-flex items-center px-3 py-1 border border-transparent rounded-md text-sm font-medium text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-            </svg>
-            返回列表
-        </button>
-
-        <div id="script-loading" class="flex justify-center py-12">
-            <div class="loading"></div>
-            <span class="ml-2 text-gray-700">正在加载脚本详情...</span>
-        </div>
-
-        <div id="script-details-container" class="hidden">
-            <div class="flex flex-col md:flex-row justify-between mb-6">
-                <div>
-                    <h1 id="script-title" class="text-2xl font-bold text-gray-900"></h1>
-                    <p id="script-path" class="text-gray-500 mt-1"></p>
-                </div>
-                <div class="mt-4 md:mt-0 flex items-start">
-                    <a id="github-link" href="#" target="_blank" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            <!-- Script details page -->
+            <div v-if="page === 'detail'" id="script-details-page" class="bg-white shadow rounded-lg p-6 flex flex-wrap">
+                <div class="w-full md:w-3/5 pr-3">
+                    <button id="back-button"  @click="goBackHome"
+                            class="mb-6 inline-flex items-center px-3 py-1 border border-transparent rounded-md text-sm font-medium text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                         </svg>
-                        在GitHub上查看
-                    </a>
-                </div>
-            </div>
+                        返回列表
+                    </button>
 
-            <div class="bg-gray-50 p-4 rounded-md mb-6">
-                <h2 class="text-lg font-medium text-gray-900 mb-2">脚本信息</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-500">创建时间</p>
-                        <p id="script-create_time" class="text-sm font-medium text-gray-900"></p>
+                    <div v-if="!activeProject" id="script-loading" class="flex justify-center py-12">
+                        <div class="loading"></div>
+                        <span class="ml-2 text-gray-700">正在加载脚本详情...</span>
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-500">最后更新</p>
-                        <p id="script-update_time" class="text-sm font-medium text-gray-900"></p>
-                    </div>
-                </div>
-            </div>
 
-            <div class="mb-6">
-                <h2 class="text-lg font-medium text-gray-900 mb-2">脚本介绍</h2>
-                <div class="bg-gray-50 rounded-md">
-                    <pre id="script-content" class="markdown-body p-4 text-sm text-gray-800 overflow-x-auto"></pre>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
-
-<!-- Footer -->
-<footer class="bg-white border-t border-gray-200 py-6 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p class="text-center text-sm text-gray-500">
-            青龙脚本管理系统 © 2025 - <a href="https://github.com/other-blowsnow/qinglong-scripts" class="text-blue-600 hover:text-blue-500">GitHub</a>
-        </p>
-    </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-<script>
-    // Global variables
-    let projects = [];
-
-    async function fetchProjects(){
-        try {
-            const apiUrl = `https://cdn.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json`;
-            const response = await axios.get(apiUrl);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching directory contents:', error);
-            return [];
-        }
-    }
-
-    // UI Functions
-    function renderScriptCards(scripts) {
-        const container = document.getElementById('scripts-container');
-        container.innerHTML = '';
-
-        scripts.forEach(script => {
-            const card = document.createElement('div');
-            card.className = 'bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300';
-
-            card.innerHTML = `
-                    <div class="p-4">
-                        <div class="flex items-center">
-                            <img class="h-5 w-5" src="${script.icon || './assets/icon/empty-project.png'}" alt="">
-                            <h3 class="ml-2 text-lg font-medium text-gray-900 truncate" title="${script.name}">${script.name}</h3>
+                    <div v-else id="script-details-container" >
+                        <div class="flex flex-col md:flex-row justify-between mb-6">
+                            <div>
+                                <h1 id="script-title" class="text-2xl font-bold text-gray-900">{{ activeProject.name }}</h1>
+                                <p id="script-path" class="text-gray-500 mt-1">{{ activeProject.desc }}</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 flex items-start">
+                                <a id="github-link" href="#" @click="openProjectUrl"
+                                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                    在GitHub上查看
+                                </a>
+                            </div>
                         </div>
-                        <p class="mt-1 text-sm text-gray-500 truncate" title="${script.desc}">${script.desc}</p>
-                        <div class="mt-4">
-                            <button class="view-script w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" data-path="${script.path}">
-                                查看详情
-                            </button>
+
+                        <div class="bg-gray-50 p-4 rounded-md mb-6">
+                            <h2 class="text-lg font-medium text-gray-900 mb-2">脚本信息</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm text-gray-500">创建时间</p>
+                                    <p id="script-create_time" class="text-sm font-medium text-gray-900">{{ new Date(activeProject.createTime).toLocaleString() }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">最后更新</p>
+                                    <p id="script-update_time" class="text-sm font-medium text-gray-900">{{ new Date(activeProject.updateTime).toLocaleString() }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h2 class="text-lg font-medium text-gray-900 mb-2">脚本介绍</h2>
+                            <div class="bg-gray-50 rounded-md">
+                            <pre id="script-content" class="markdown-body p-4 text-sm text-gray-800 overflow-x-auto" v-html="activeProjectContentHtml">
+
+                            </pre>
+                            </div>
                         </div>
                     </div>
-                `;
+                </div>
 
-            container.appendChild(card);
-        });
+                <div class="w-full md:w-2/5">
+                    <giscus-widget
+                            repo="other-blowsnow/qinglong-scripts"
+                            repoId="R_kgDOOiwwFA"
+                            category="General"
+                            categoryId="DIC_kwDOOiwwFM4CpqWX"
+                            mapping="specific"
+                            :term="activeProject.path"
+                            strict="1"
+                            reactionsEnabled="1"
+                            emit-metadata="0"
+                            input-position="bottom"
+                            theme="preferred_color_scheme"
+                            lang="zh-CN"
+                            loading="lazy">
+                    </giscus-widget>
+                </div>
+            </div>
+        </main>
 
-        // Add event listeners to view script buttons
-        document.querySelectorAll('.view-script').forEach(button => {
-            button.addEventListener('click', () => {
-                const scriptPath = button.getAttribute('data-path');
-                showScriptDetails(scriptPath);
-            });
-        });
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 py-6 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <p class="text-center text-sm text-gray-500">
+                    脚本管理系统 © 2025 - <a href="https://github.com/other-blowsnow/qinglong-scripts" class="text-blue-600 hover:text-blue-500">GitHub</a>
+                </p>
+            </div>
+        </footer>
+    </div>
 
-        // Show container
-        document.getElementById('loading').classList.add('hidden');
-        if (scripts.length > 0) {
-            container.classList.remove('hidden');
-            document.getElementById('no-results').classList.add('hidden');
-        } else {
-            container.classList.add('hidden');
-            document.getElementById('no-results').classList.remove('hidden');
-        }
-    }
 
-    async function showScriptDetails(path) {
-        // Hide home page and show details page
-        document.getElementById('home-page').classList.add('hidden');
-        document.getElementById('script-details-page').classList.remove('hidden');
+    <script>
+        const { createApp, ref, computed } = Vue
 
-        // Show loading indicator
-        document.getElementById('script-loading').classList.remove('hidden');
-        document.getElementById('script-details-container').classList.add('hidden');
+        createApp({
+            setup() {
+                const page = ref('home')
+                const projects = ref([])
+                const activeProject = ref(null)
+                const activeProjectContentHtml = computed(() => {
+                    if (!activeProject.value){
+                        return "";
+                    }
+                    return marked.parse(activeProject.value.content)
+                })
+                const searchProjectTerm = ref(null)
+                const filteredProjects = computed(() => {
+                    if (!searchProjectTerm.value) return projects.value
+                   return projects.value.filter(project =>
+                        project.name.toLowerCase().includes(searchProjectTerm.value) ||
+                        project.path.toLowerCase().includes(searchProjectTerm.value)
+                    );
+                })
 
-        try {
-            location.hash = '#project&path='+path;
-            // Find script in allScripts array
-            const script = projects.find(s => s.path === path);
+                const fetchProjects = async () => {
+                    try {
+                        const apiUrl = `https://cdn.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json`;
+                        const response = await axios.get(apiUrl);
+                        return response.data;
+                    } catch (error) {
+                        console.error('Error fetching directory contents:', error);
+                        return [];
+                    }
+                }
 
-            console.log('script', script);
+                const showProjectDetails = (project) => {
+                    activeProject.value = project
+                    page.value = 'detail'
 
-            if (!script) {
-                throw new Error('Script not found');
+                    location.hash = '#project&path='+project.path;
+                }
+
+                const goBackHome = () => {
+                    activeProject.value = null
+                    page.value = 'home'
+                }
+
+                const openProjectUrl = () => {
+                    window.open("https://github.com/other-blowsnow/qinglong-scripts/tree/master/" + activeProject.value.path, '_blank');
+                }
+
+                // 初始化页面
+                const initPage = async () => {
+                    projects.value = await fetchProjects();
+
+                    if (location.hash.startsWith('#project')){
+                        let params = new URLSearchParams(location.hash.substring(1));
+                        let path = params.get("path")
+                        console.log('showScriptDetails', path);
+                        if (path){
+                            let project = projects.value.find(item => item.path === path)
+                            if (project){
+                                showProjectDetails(project)
+                            } else {
+                                console.error('Project not found:', path);
+                            }
+                        }
+                    }
+                }
+
+                initPage();
+
+                return {
+                    page,
+                    projects,
+                    filteredProjects,
+                    searchProjectTerm,
+                    activeProject,
+                    activeProjectContentHtml,
+
+                    openProjectUrl,
+                    showProjectDetails,
+                    goBackHome
+                }
             }
+        }).mount('#app')
 
-            // Update UI
-            document.getElementById('script-title').textContent = script.name;
-            document.getElementById('script-path').textContent = script.desc;
-            document.getElementById('script-create_time').textContent = new Date(script.createTime).toLocaleString();
-            document.getElementById('script-update_time').textContent = new Date(script.updateTime).toLocaleString();
-
-            document.getElementById('script-content').innerHTML = marked.parse(script.content); // Correct usage of marked
-            document.getElementById('github-link').href = "https://github.com/other-blowsnow/qinglong-scripts/tree/master/" + script.path;
-
-            // Hide loading indicator and show content
-            document.getElementById('script-loading').classList.add('hidden');
-            document.getElementById('script-details-container').classList.remove('hidden');
-        } catch (error) {
-            console.error('Error loading script details:', error);
-
-            // Show error message
-            document.getElementById('script-loading').classList.add('hidden');
-            document.getElementById('script-details-container').classList.remove('hidden');
-            document.getElementById('script-create_time').textContent = "加载失败";
-            document.getElementById('script-update_time').textContent = "加载失败";
-            document.getElementById('script-title').textContent = '加载失败';
-            document.getElementById('script-path').textContent = path;
-            document.getElementById('script-content').textContent = '无法加载脚本内容，请稍后重试。';
-        }
-    }
-
-    // Initialize application
-    async function init() {
-        // Load all scripts
-        projects = await fetchProjects();
-
-        renderScriptCards(projects);
-
-        if (location.hash.startsWith('#project')){
-            let params = new URLSearchParams(location.hash.substring(1));
-            let path = params.get("path")
-            console.log('showScriptDetails', path);
-            showScriptDetails(path);
-        }
-
-        // Set up search functionality
-        const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-
-            if (searchTerm === '') {
-                renderScriptCards(projects);
-            } else {
-                const filteredScripts = projects.filter(script =>
-                    script.name.toLowerCase().includes(searchTerm) ||
-                    script.path.toLowerCase().includes(searchTerm)
-                );
-                renderScriptCards(filteredScripts);
-            }
-        });
-
-        // Set up back button
-        document.getElementById('back-button').addEventListener('click', () => {
-            document.getElementById('script-details-page').classList.add('hidden');
-            document.getElementById('home-page').classList.remove('hidden');
-
-            // 删除 location hash
-            location.hash = '';
-        });
-
-        // Set up home link
-        document.getElementById('home-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('script-details-page').classList.add('hidden');
-            document.getElementById('home-page').classList.remove('hidden');
-        });
-    }
-
-    // Start application
-    document.addEventListener('DOMContentLoaded', init);
-</script>
+    </script>
 </body>
 </html>
