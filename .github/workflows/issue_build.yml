@@ -1,0 +1,118 @@
+name: Issue Close Handler
+
+on:
+  issues:
+    types:
+      - closed
+
+jobs:
+  handle-closed-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get issue details
+        id: get_issue
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          REPO=${{ github.repository }}
+          
+          # 获取 issue 详情
+          ISSUE_TITLE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NUMBER" | jq -r '.title')
+          
+          # 获取所有标签并去除换行符
+          LABELS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NUMBER" | jq -r '.labels | .[].name' | tr '\n' ' ')
+          
+          echo "Labels: $LABELS"
+          
+          # 检查是否有 '构建脚本' 标签
+          if [[ "$LABELS" == *"构建脚本"* ]]; then
+            echo "Label '构建脚本' found. Proceeding with file operations."
+            echo "continue_process=true" >> $GITHUB_ENV  # 设置环境变量
+          else
+            echo "No '构建脚本' label found. Skipping file operations."
+            echo "continue_process=false" >> $GITHUB_ENV  # 设置环境变量
+          fi
+          
+          echo "CLEAN_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
+
+      - name: Check .continue_process content (debug)
+        run: |
+          echo "continue_process: ${{ env.continue_process }}"  # 打印 output 的值
+
+      - name: Download attachments (if any)
+        if: env.continue_process == 'true'
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          REPO=${{ github.repository }}
+          
+          # 获取 issue 本身的内容
+          ISSUE_BODY=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NUMBER" | jq -r '.body')
+          
+          echo "Issue body fetched: $ISSUE_BODY"  # 调试输出 issue body 内容
+          
+          # 获取所有评论
+          COMMENTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NUMBER/comments")
+          
+          echo "Comments fetched: $COMMENTS"  # 调试输出评论内容
+          
+          # 查找并下载所有附件
+          mkdir -p attachments
+          
+          echo "$ISSUE_BODY" >> "attachments/readme.md"
+          
+          declare -A zip_files_set  # 使用关联数组来去重
+          
+          for url in $(echo "$ISSUE_BODY" | grep -oP 'https://github.com/.*?\.(ts|js|py|jpg|png|zip|tar.gz|txt)'); do
+            echo "Downloading $url..."
+            curl -L -o "attachments/$(basename $url)" "$url"
+            # 如果是 zip 文件，记录文件名
+            if [[ "$url" == *.zip ]]; then
+              zip_files_set["attachments/$(basename $url)"]=1  # 将文件名作为键，值设为 1（存在即可）
+            fi
+          done
+          
+          for url in $(echo "$COMMENTS" | jq -r '.[].body' | grep -oP 'https://github.com/.*?\.(ts|js|py|jpg|png|zip|tar.gz|txt)'); do
+            echo "Downloading $url..."
+            curl -L -o "attachments/$(basename $url)" "$url"
+            # 如果是 zip 文件，记录文件名
+            if [[ "$url" == *.zip ]]; then
+              zip_files_set["attachments/$(basename $url)"]=1  # 将文件名作为键，值设为 1（存在即可）
+            fi
+          done
+          
+          zip_files=("${!zip_files_set[@]}")  # 获取关联数组的键（即文件路径）
+
+          # 统一解压所有的 zip 文件
+          for zip_file in "${zip_files[@]}"; do
+            echo "Extracting zip file: $zip_file"
+            unzip -q "$zip_file" -d "attachments"  # 解压到新目录
+            rm "$zip_file"  # 解压后删除原 zip 文件
+          done
+          
+          # 确保下载的文件存在
+          echo "Download complete. Files in 'attachments' directory:"
+          ls -l attachments  # 输出下载的文件列表
+
+      - name: Create project directory and move files
+        if: env.continue_process == 'true'
+        run: |
+          PROJECT_DIR="${{ env.CLEAN_TITLE }}"
+          mkdir -p "$PROJECT_DIR"
+          mv attachments/* "$PROJECT_DIR/"
+
+      - name: Commit and push changes
+        if: env.continue_process == 'true'
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git commit -m "自动构建项目：${{ env.CLEAN_TITLE }} #${{ github.event.issue.number }}"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
