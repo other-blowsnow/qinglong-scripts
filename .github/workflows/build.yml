@@ -3,7 +3,7 @@ name: 构建项目文件
 on:
   push:
     branches:
-      - main
+      - master
   workflow_run:
     workflows: [ "Issue Close Handler" ]  # 要触发的工作流名称
     types:
