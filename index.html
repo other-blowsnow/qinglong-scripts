@@ -6,6 +6,8 @@
     <title>青龙脚本管理系统</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css" rel="stylesheet">
+
     <style>
         .loading {
             display: inline-block;
@@ -129,7 +131,7 @@
             <div class="mb-6">
                 <h2 class="text-lg font-medium text-gray-900 mb-2">脚本介绍</h2>
                 <div class="bg-gray-50 rounded-md">
-                    <pre id="script-content" class="p-4 text-sm text-gray-800 overflow-x-auto"></pre>
+                    <pre id="script-content" class="markdown-body p-4 text-sm text-gray-800 overflow-x-auto"></pre>
                 </div>
             </div>
         </div>
@@ -144,6 +146,8 @@
         </p>
     </div>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
     // Global variables
@@ -231,7 +235,8 @@
             document.getElementById('script-path').textContent = script.desc;
             document.getElementById('script-create_time').textContent = new Date(script.createTime).toLocaleString();
             document.getElementById('script-update_time').textContent = new Date(script.updateTime).toLocaleString();
-            document.getElementById('script-content').textContent = script.content;
+
+            document.getElementById('script-content').innerHTML = marked.parse(script.content); // Correct usage of marked
             document.getElementById('github-link').href = "https://github.com/other-blowsnow/qinglong-scripts/tree/master/" + script.path;
 
             // Hide loading indicator and show content
