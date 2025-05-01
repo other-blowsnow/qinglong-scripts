@@ -79,6 +79,7 @@ function buildProject(name){
         path: name,
         // 生成时间，如果有就别改了
         createTime: createTime,
+        updateTime: Date.now()
     }
 }
 
