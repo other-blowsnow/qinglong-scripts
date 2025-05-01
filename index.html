@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青龙脚本管理系统</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <style>
+        .loading {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- Navigation -->
+<nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/" class="text-2xl font-bold text-blue-600">青龙脚本管理系统</a>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <a href="#" id="home-link" class="border-b-2 border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                        首页
+                    </a>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <a href="https://github.com/other-blowsnow/qinglong-scripts/issues/new?template=%E6%96%B0%E8%84%9A%E6%9C%AC.md"
+                   target="_blank"
+                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    提交新脚本
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Home page -->
+    <div id="home-page" class="bg-white shadow rounded-lg p-6">
+        <div class="mb-6">
+            <label for="search" class="sr-only">搜索脚本</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input id="search-input" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="搜索脚本名称或关键词" type="search">
+            </div>
+        </div>
+
+        <div id="loading" class="flex justify-center py-12">
+            <div class="loading"></div>
+            <span class="ml-2 text-gray-700">正在加载脚本列表...</span>
+        </div>
+
+        <div id="scripts-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Scripts will be loaded here -->
+        </div>
+
+        <div id="no-results" class="hidden text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">没有找到相关脚本</h3>
+            <p class="mt-1 text-sm text-gray-500">请尝试其他关键词进行搜索。</p>
+        </div>
+    </div>
+
+    <!-- Script details page -->
+    <div id="script-details-page" class="hidden bg-white shadow rounded-lg p-6">
+        <button id="back-button" class="mb-6 inline-flex items-center px-3 py-1 border border-transparent rounded-md text-sm font-medium text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            返回列表
+        </button>
+
+        <div id="script-loading" class="flex justify-center py-12">
+            <div class="loading"></div>
+            <span class="ml-2 text-gray-700">正在加载脚本详情...</span>
+        </div>
+
+        <div id="script-details-container" class="hidden">
+            <div class="flex flex-col md:flex-row justify-between mb-6">
+                <div>
+                    <h1 id="script-title" class="text-2xl font-bold text-gray-900"></h1>
+                    <p id="script-path" class="text-gray-500 mt-1"></p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-start">
+                    <a id="github-link" href="#" target="_blank" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        在GitHub上查看
+                    </a>
+                </div>
+            </div>
+
+<!--            <div class="bg-gray-50 p-4 rounded-md mb-6">-->
+<!--                <h2 class="text-lg font-medium text-gray-900 mb-2">脚本信息</h2>-->
+<!--                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">-->
+<!--                    <div>-->
+<!--                        <p class="text-sm text-gray-500">文件大小</p>-->
+<!--                        <p id="script-size" class="text-sm font-medium text-gray-900"></p>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <p class="text-sm text-gray-500">最后更新</p>-->
+<!--                        <p id="script-updated" class="text-sm font-medium text-gray-900"></p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div class="mb-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-2">脚本介绍</h2>
+                <div class="bg-gray-50 rounded-md">
+                    <pre id="script-content" class="p-4 text-sm text-gray-800 overflow-x-auto"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-white border-t border-gray-200 py-6 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-sm text-gray-500">
+            青龙脚本管理系统 © 2025 - <a href="https://github.com/other-blowsnow/qinglong-scripts" class="text-blue-600 hover:text-blue-500">GitHub</a>
+        </p>
+    </div>
+</footer>
+
+<script>
+    // Global variables
+    let allScripts = [];
+
+    // GitHub API functions
+    async function fetchTopDirectory() {
+        try {
+            const apiUrl = `https://api.github.com/repos/other-blowsnow/qinglong-scripts/contents`;
+            const response = await axios.get(apiUrl);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching directory contents:', error);
+            return [];
+        }
+    }
+
+    async function fetchFileContent(path) {
+        try {
+            const apiUrl = `https://api.github.com/repos/other-blowsnow/qinglong-scripts/contents/${path}`;
+            const response = await axios.get(apiUrl);
+            // GitHub API returns content as base64 encoded
+            return {
+                content: atob(response.data.content),
+                size: response.data.size,
+                url: response.data.html_url,
+            };
+        } catch (error) {
+            console.error('Error fetching file content:', error);
+            return {
+                content: '无法加载脚本内容',
+                size: 0,
+                url: '#',
+            };
+        }
+    }
+
+
+
+    // Fetch all scripts recursively
+    async function fetchAllScripts() {
+        const items = await fetchTopDirectory();
+        let scripts = [];
+
+        for (const item of items) {
+            if (item.type === 'dir') {
+                // 以 .开头的
+                if (item.path.startsWith(".")) continue
+                // 获取readme.md文件内容
+                let readmeObj = await fetchFileContent(item.path + "/" + "readme.md")
+                // Recursively fetch scripts from subdirectories
+                scripts.push({
+                    name: item.name,
+                    path: item.path,
+                    url: item.html_url,
+                    content: readmeObj.content
+                });
+            }
+        }
+
+        return scripts;
+    }
+
+    // UI Functions
+    function renderScriptCards(scripts) {
+        const container = document.getElementById('scripts-container');
+        container.innerHTML = '';
+
+        scripts.forEach(script => {
+            const card = document.createElement('div');
+            card.className = 'bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300';
+
+            // Determine script type icon
+            let typeIcon = '';
+            if (script.name.endsWith('.js')) {
+                typeIcon = '<svg class="h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M0 32v448h448V32H0zm243.8 349.4c0 43.6-25.6 63.5-62.9 63.5-33.7 0-53.2-17.4-63.2-38.5l34.3-20.7c6.6 11.7 12.6 21.6 27.1 21.6 13.8 0 22.6-5.4 22.6-26.5V237.7h42.1v143.7zm99.6 63.5c-39.1 0-64.4-18.6-76.7-43l34.3-19.8c9 14.7 20.8 25.6 41.5 25.6 17.4 0 28.6-8.7 28.6-20.8 0-14.4-11.4-19.5-30.7-28l-10.5-4.5c-30.4-12.9-50.5-29.2-50.5-63.5 0-31.6 24.1-55.6 61.6-55.6 26.8 0 46 9.3 59.8 33.7L368 290c-7.2-12.9-15-18-27.1-18-12.3 0-20.1 7.8-20.1 18 0 12.6 7.8 17.7 25.9 25.6l10.5 4.5c35.8 15.3 55.9 31 55.9 66.2 0 37.8-29.8 58.6-69.7 58.6z"></path></svg>';
+            } else if (script.name.endsWith('.py')) {
+                typeIcon = '<svg class="h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6zM286.2 404c11.1 0 20.1 9.1 20.1 20.3 0 11.3-9 20.4-20.1 20.4-11 0-20.1-9.2-20.1-20.4.1-11.3 9.1-20.3 20.1-20.3zM167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4zm-6.7-142.6c-11.1 0-20.1-9.1-20.1-20.3.1-11.3 9-20.4 20.1-20.4 11 0 20.1 9.2 20.1 20.4s-9 20.3-20.1 20.3z"></path></svg>';
+            } else if (script.name.endsWith('.sh')) {
+                typeIcon = '<svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M257.981 272.971L63.638 467.314c-9.373 9.373-24.569 9.373-33.941 0L7.029 444.647c-9.357-9.357-9.375-24.522-.04-33.901L161.011 256 6.99 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L257.981 239.03c9.373 9.372 9.373 24.568 0 33.941zM576 256c0 13.255-10.745 24-24 24H312c-13.255 0-24-10.745-24-24s10.745-24 24-24h240c13.255 0 24 10.745 24 24z"></path></svg>';
+            }
+
+            card.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex items-center">
+                            ${typeIcon}
+                            <h3 class="ml-2 text-lg font-medium text-gray-900 truncate" title="${script.name}">${script.name}</h3>
+                        </div>
+<!--                        <p class="mt-1 text-sm text-gray-500 truncate" title="${script.path}">${script.path}</p>-->
+<!--                        <p class="mt-1 text-xs text-gray-400">${script.size}</p>-->
+                        <div class="mt-4">
+                            <button class="view-script w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" data-path="${script.path}">
+                                查看详情
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            container.appendChild(card);
+        });
+
+        // Add event listeners to view script buttons
+        document.querySelectorAll('.view-script').forEach(button => {
+            button.addEventListener('click', () => {
+                const scriptPath = button.getAttribute('data-path');
+                showScriptDetails(scriptPath);
+            });
+        });
+
+        // Show container
+        document.getElementById('loading').classList.add('hidden');
+        if (scripts.length > 0) {
+            container.classList.remove('hidden');
+            document.getElementById('no-results').classList.add('hidden');
+        } else {
+            container.classList.add('hidden');
+            document.getElementById('no-results').classList.remove('hidden');
+        }
+    }
+
+    async function showScriptDetails(path) {
+        // Hide home page and show details page
+        document.getElementById('home-page').classList.add('hidden');
+        document.getElementById('script-details-page').classList.remove('hidden');
+
+        // Show loading indicator
+        document.getElementById('script-loading').classList.remove('hidden');
+        document.getElementById('script-details-container').classList.add('hidden');
+
+        try {
+            // Find script in allScripts array
+            const script = allScripts.find(s => s.path === path);
+
+            console.log('script', script);
+
+            if (!script) {
+                throw new Error('Script not found');
+            }
+
+            // Update UI
+            document.getElementById('script-title').textContent = script.name;
+            document.getElementById('script-path').textContent = script.path;
+            // document.getElementById('script-size').textContent = formatFileSize(script.size);
+            // document.getElementById('script-updated').textContent = formatDate(scriptData.lastUpdated);
+            document.getElementById('script-content').textContent = script.content;
+            document.getElementById('github-link').href = script.url;
+
+            // Hide loading indicator and show content
+            document.getElementById('script-loading').classList.add('hidden');
+            document.getElementById('script-details-container').classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading script details:', error);
+
+            // Show error message
+            document.getElementById('script-loading').classList.add('hidden');
+            document.getElementById('script-details-container').classList.remove('hidden');
+            document.getElementById('script-title').textContent = '加载失败';
+            document.getElementById('script-path').textContent = path;
+            document.getElementById('script-content').textContent = '无法加载脚本内容，请稍后重试。';
+        }
+    }
+
+    // Initialize application
+    async function init() {
+        // Load all scripts
+        allScripts = await fetchAllScripts();
+        renderScriptCards(allScripts);
+
+        // Set up search functionality
+        const searchInput = document.getElementById('search-input');
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            if (searchTerm === '') {
+                renderScriptCards(allScripts);
+            } else {
+                const filteredScripts = allScripts.filter(script =>
+                    script.name.toLowerCase().includes(searchTerm) ||
+                    script.path.toLowerCase().includes(searchTerm)
+                );
+                renderScriptCards(filteredScripts);
+            }
+        });
+
+        // Set up back button
+        document.getElementById('back-button').addEventListener('click', () => {
+            document.getElementById('script-details-page').classList.add('hidden');
+            document.getElementById('home-page').classList.remove('hidden');
+        });
+
+        // Set up home link
+        document.getElementById('home-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('script-details-page').classList.add('hidden');
+            document.getElementById('home-page').classList.remove('hidden');
+        });
+    }
+
+    // Start application
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
