@@ -99,7 +99,7 @@ function buildProjectsTable(projects){
     tableMd = tableMd + table;
 
     // 替换文件内容
-    const readmePath = path.join(__dirname, '../', 'README.md');
+    const readmePath = path.join(__dirname, '../', 'readme.md');
     const readme = fs.readFileSync(readmePath, 'utf-8').replaceAll('\r\n', '\n').replaceAll('\r', '\n');
     const newReadme = readme.replace(/## 项目列表\n([\s\S]*?)-------项目列表结束--------/g, `## 项目列表\n${tableMd}-------项目列表结束--------`);
     fs.writeFileSync(readmePath, newReadme, 'utf-8');
