@@ -88,13 +88,13 @@ function buildProjects(projects){
 }
 
 function buildProjectsTable(projects){
-    let tableMd = `| 项目名称 | 项目描述 | 项目路径 | 创建时间 | 更新时间 |`
-        + `\n| --- | --- | --- | --- | --- |\n`;
+    let tableMd = `| 项目名称 | 项目描述 | 创建时间 | 更新时间 |`
+        + `\n| --- | --- | --- | --- |\n`;
     let table = '';
     for (const project of projects) {
         const createTime = new Date(project.createTime).toLocaleString();
         const updateTime = new Date(project.updateTime).toLocaleString();
-        table += `| ${project.name} | ${project.desc} | [${project.path}](${project.path}) | ${createTime} | ${updateTime} |\n`;
+        table += `| [${project.name}](${project.path}) | ${project.desc} | ${createTime} | ${updateTime} |\n`;
     }
     tableMd = tableMd + table;
 
