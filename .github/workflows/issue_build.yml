@@ -125,3 +125,7 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: refresh cache
+        run: |
+          curl "https://purge.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json"

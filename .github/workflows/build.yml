@@ -28,3 +28,7 @@ jobs:
         git diff --quiet || (git add . && git commit -m "自动构建项目文件" && git push)
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: refresh cache
+      run: |
+          curl "https://purge.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json"
