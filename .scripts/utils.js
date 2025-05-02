@@ -24,7 +24,7 @@ function buildProjectInfo(name){
     const icon = fs.existsSync(path.join(baseDir, 'icon.png')) ? path.join(name, 'icon.png') : null;
 
     // 尝试判断脚本类型
-    const scriptTypes = [
+    const scriptLanguages = [
         {
             name: 'js',
             desc: 'JavaScript',
@@ -42,14 +42,14 @@ function buildProjectInfo(name){
             desc: 'Shell',
         }
     ];
-    let projectType = "python"
+    let projectLanguage = "python"
     // 扫描目录，查询后缀
     const files = fs.readdirSync(baseDir);
     for (const file of files) {
         const ext = path.extname(file);
-        for (const scriptType of scriptTypes) {
-            if (ext === `.${scriptType.name}`) {
-                projectType = scriptType.name;
+        for (const scriptLanguage of scriptLanguages) {
+            if (ext === `.${scriptLanguage.name}`) {
+                projectLanguage = scriptLanguage.name;
                 break;
             }
         }
@@ -68,7 +68,7 @@ function buildProjectInfo(name){
         desc: desc,
         content: readme,
         icon: icon,
-        type: projectType,
+        language: projectLanguage,
         path: name,
         // 生成时间，如果有就别改了
         createTime: createTime,
