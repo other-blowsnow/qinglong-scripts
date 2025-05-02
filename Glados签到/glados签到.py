@@ -18,21 +18,20 @@ import time
 
 # 获取GlaDOS账号Cookie
 def get_cookies():
-    # if os.environ.get("GR_COOKIE"):
-    #     print("已获取并使用Env环境 Cookie")
-    #     if '&' in os.environ["GR_COOKIE"]:
-    #         cookies = os.environ["GR_COOKIE"].split('&')
-    #     elif '\n' in os.environ["GR_COOKIE"]:
-    #         cookies = os.environ["GR_COOKIE"].split('\n')
-    #     else:
-    #         cookies = [os.environ["GR_COOKIE"]]
-    # else:
-    #     from config import Cookies
-    #     cookies = Cookies
-    #     if len(cookies) == 0:
-    #         print("未获取到正确的GlaDOS账号Cookie")
-    #         return
-    cookies = ["koa:sess=eyJ1c2VySWQiOjUzMjkxMCwiX2V4cGlyZSI6MTc3MTkzOTk0NTgxOSwiX21heEFnZSI6MjU5MjAwMDAwMDB9; koa:sess.sig=sy_1RYGbf13BQlOEFzV3aXtbrus"]
+    if os.environ.get("GR_COOKIE"):
+        print("已获取并使用Env环境 Cookie")
+        if '&' in os.environ["GR_COOKIE"]:
+            cookies = os.environ["GR_COOKIE"].split('&')
+        elif '\n' in os.environ["GR_COOKIE"]:
+            cookies = os.environ["GR_COOKIE"].split('\n')
+        else:
+            cookies = [os.environ["GR_COOKIE"]]
+    else:
+        from config import Cookies
+        cookies = Cookies
+        if len(cookies) == 0:
+            print("未获取到正确的GlaDOS账号Cookie")
+            return
     print(f"共获取到{len(cookies)}个GlaDOS账号Cookie\n")
     print(f"脚本执行时间(北京时区): {time.strftime('%Y/%m/%d %H:%M:%S', time.localtime())}\n")
     return cookies
