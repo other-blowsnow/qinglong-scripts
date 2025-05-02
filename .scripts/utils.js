@@ -8,7 +8,7 @@ for (const project of historyProjects) {
     historyProjectObjects[project.name] = project;
 }
 
-function buildProject(name){
+function buildProjectInfo(name){
     const baseDir = path.join(__dirname, '../', name);
     // 获取readme.md文件内容
     const readmePath = path.join(baseDir, 'readme.md');
@@ -76,10 +76,40 @@ function buildProject(name){
     }
 }
 
+function buildProjects(projects){
+    // 根据更新时间排序
+    projects.sort((a, b) => {
+        return b.updateTime - a.updateTime;
+    });
+    // 生成文件
+    fs.writeFileSync(projectJsonPath, JSON.stringify(projects), 'utf-8');
+    // 生成项目表格
+    buildProjectsTable(projects);
+}
+
+function buildProjectsTable(projects){
+    let tableMd = `| 项目名称 | 项目描述 | 项目路径 | 创建时间 | 更新时间 |`
+        + `\n| --- | --- | --- | --- | --- |\n`;
+    let table = '';
+    for (const project of projects) {
+        const createTime = new Date(project.createTime).toLocaleString();
+        const updateTime = new Date(project.updateTime).toLocaleString();
+        table += `| ${project.name} | ${project.desc} | [${project.path}](${project.path}) | ${createTime} | ${updateTime} |\n`;
+    }
+    tableMd = tableMd + table;
+
+    // 替换文件内容
+    const readmePath = path.join(__dirname, '../', 'README.md');
+    const readme = fs.readFileSync(readmePath, 'utf-8').replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+    const newReadme = readme.replace(/## 项目列表\n([\s\S]*?)-------项目列表结束--------/g, `## 项目列表\n${tableMd}-------项目列表结束--------`);
+    fs.writeFileSync(readmePath, newReadme, 'utf-8');
+}
+
 
 module.exports = {
     projectJsonPath,
     historyProjects,
     historyProjectObjects,
-    buildProject
+    buildProjectInfo,
+    buildProjects
 }

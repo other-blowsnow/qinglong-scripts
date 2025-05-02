@@ -1,7 +1,7 @@
 // 1.扫描上级目录所有
 const fs = require('fs');
 const path = require('path');
-const {buildProject, projectJsonPath} = require("./utils");
+const {buildProjectInfo, projectJsonPath, buildProjects} = require("./utils");
 
 
 const list = fs.readdirSync(path.join(__dirname, '../')).filter(dir => {
@@ -16,7 +16,7 @@ const list = fs.readdirSync(path.join(__dirname, '../')).filter(dir => {
 const projectList = []
 for (const name of list) {
     try {
-        projectList.push(buildProject(name));
+        projectList.push(buildProjectInfo(name));
     }catch (e){
         console.error(`构建项目失败：${name}`, e);
     }
@@ -24,5 +24,4 @@ for (const name of list) {
 
 console.log("构建成功", projectList.length);
 
-// 生成文件
-fs.writeFileSync(projectJsonPath, JSON.stringify(projectList), 'utf-8');
+buildProjects(projectList)
