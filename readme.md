@@ -1,6 +1,21 @@
 # 青龙脚本分享
 致力于分享青龙脚本，欢迎大家一起交流学习
 
+## 青龙面板订阅
+```shell
+ql repo https://github.com/other-blowsnow/qinglong-scripts.git "" "\.scripts"
+```
+
+```text
+名称：自用
+类型：公开仓库
+链接：https://github.com/other-blowsnow/qinglong-scripts.git
+定时类型：crontab
+黑名单：\.scripts
+定时规则：0 30 * * * *
+文件后缀：py js
+```
+
 ## 项目列表
 | 项目名称 | 项目描述 | 创建时间 | 更新时间 |
 | --- | --- | --- | --- |
