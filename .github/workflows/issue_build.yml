@@ -130,4 +130,6 @@ jobs:
 
       - name: refresh cache
         run: |
+          sleep 30
+          echo "延迟10秒..."
           curl "https://purge.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json"
