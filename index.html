@@ -117,10 +117,10 @@
                                 </div>
                                 <h3 class="ml-3 text-lg font-semibold text-gray-900 truncate" :title="script.name">{{ script.name }}</h3>
                             </div>
-                            <p class="text-sm text-gray-500 line-clamp-2 h-10" :title="script.desc">{{ script.desc }}</p>
+                            <p class="text-sm text-gray-500 line-clamp-2 h-10" style="overflow: hidden;" :title="script.desc">{{ script.desc }}</p>
 
                             <div class="mt-4 flex flex-wrap text-xs text-gray-500">
-                                <div class="mr-4 flex items-center">
+                                <div class="mr-4 flex items-center" :title="new Date(script.updateTime).toLocaleString()">
                                     <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                                     </svg>
