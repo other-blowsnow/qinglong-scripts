@@ -27,286 +27,256 @@
             to { transform: rotate(360deg); }
         }
 
-        .markdown-body{
-            white-space: break-spaces;
+        .card-hover {
+            transition: all 0.3s ease;
         }
-        .markdown-body ol{
-            list-style: disc;
-        }
-        .markdown-body ul{
-            list-style: auto;
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <div id="app">
-        <!-- Navigation -->
-        <nav class="bg-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <div class="flex-shrink-0 flex items-center">
-                            <a href="/" class="text-2xl font-bold text-blue-600">脚本管理系统</a>
-                        </div>
-                        <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                            <a href="#" id="home-link" class="border-b-2 border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
-                                首页
-                            </a>
-                        </div>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+<div id="app">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-2xl font-bold text-blue-600 flex items-center">
+                            <svg class="h-8 w-8 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                            脚本管理系统
+                        </a>
                     </div>
-                    <div class="flex items-center">
-                        <a href="https://github.com/other-blowsnow/qinglong-scripts/issues/new?template=%E6%96%B0%E8%84%9A%E6%9C%AC.md"
-                           target="_blank"
-                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            提交新脚本
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/" class="border-b-2 border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
+                            首页
                         </a>
                     </div>
                 </div>
+                <div class="flex items-center">
+                    <a href="https://github.com/other-blowsnow/qinglong-scripts/issues/new?template=%E6%96%B0%E8%84%9A%E6%9C%AC.md"
+                       target="_blank"
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        提交新脚本
+                    </a>
+                </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <!-- Home page -->
-            <div v-if="page === 'home'" id="home-page" class="bg-white shadow rounded-lg p-6">
-                <div class="mb-6">
-                    <label class="sr-only">搜索脚本</label>
-                    <div class="relative">
+    <!-- Main Content -->
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Hero Section -->
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg mb-8 p-8 text-white">
+                <h1 class="text-3xl font-bold mb-2">欢迎使用脚本管理系统</h1>
+                <p class="text-lg opacity-90 mb-6">轻松查找、管理和分享自动化脚本</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="relative flex-grow">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="h-5 w-5 text-gray-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                             </svg>
                         </div>
                         <input id="search-input" v-model="searchProjectTerm"
-                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="搜索脚本名称或关键词" type="search">
+                               class="block w-full pl-10 pr-3 py-3 rounded-md leading-5 bg-white bg-opacity-20 placeholder-gray-100 border border-transparent focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent sm:text-sm"
+                               placeholder="搜索脚本名称或关键词" type="search">
                     </div>
                 </div>
+            </div>
 
-                <div v-if="projects.length === 0" id="loading" class="flex justify-center py-12">
-                    <div class="loading"></div>
-                    <span class="ml-2 text-gray-700">正在加载脚本列表...</span>
+            <div v-if="projects.length === 0" class="flex justify-center py-16">
+                <div class="loading"></div>
+                <span class="ml-2 text-gray-700">正在加载脚本列表...</span>
+            </div>
+
+            <div v-else>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">可用脚本 ({{ filteredProjects.length }})</h2>
+                    <div class="text-sm text-gray-500">最后更新: {{ lastUpdateDate }}</div>
                 </div>
 
-                <div v-else-if="filteredProjects.length > 0" id="scripts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="script in filteredProjects" class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="p-4">
-                            <div class="flex items-center">
-                                <img class="h-5 w-5" :src="script.icon || './assets/icon/empty-project.png'" alt="">
-                                <h3 class="ml-2 text-lg font-medium text-gray-900 truncate" :title="script.name">{{script.name}}</h3>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-500 truncate" :title="script.desc">{{script.desc}}</p>
-                            <!-- 添加语言和更新时间信息 -->
-                            <div class="mt-2 flex flex-wrap text-xs text-gray-500">
-                                <div class="mr-4 flex items-center">
-                                    <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <!-- Grid Display -->
+                <div v-if="filteredProjects.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="script in filteredProjects" :key="script.path"
+                         class="bg-white border border-gray-200 rounded-lg shadow-sm card-hover overflow-hidden">
+                        <div class="p-5">
+                            <div class="flex items-center mb-3">
+                                <div class="p-2 rounded-md" :class="getLanguageColor(script.language)">
+                                    <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                                     </svg>
-                                    <span>{{ script.language || '未知' }}</span>
                                 </div>
-                                <div class="flex items-center">
+                                <h3 class="ml-3 text-lg font-semibold text-gray-900 truncate" :title="script.name">{{ script.name }}</h3>
+                            </div>
+                            <p class="text-sm text-gray-500 line-clamp-2 h-10" :title="script.desc">{{ script.desc }}</p>
+
+                            <div class="mt-4 flex flex-wrap text-xs text-gray-500">
+                                <div class="mr-4 flex items-center">
                                     <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                                     </svg>
-                                    <span>{{ new Date(script.updateTime).toLocaleString() }}</span>
+                                    <span>{{ formatDate(script.updateTime) }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>{{ script.language || '未知' }}</span>
                                 </div>
                             </div>
-                            <div class="mt-4">
-                                <button class="view-script w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                        @click="showProjectDetails(script)">
+
+                            <div class="flex mt-5 space-x-2">
+                                <a :href="'detail.html?path=' + encodeURIComponent(script.path)"
+                                   class="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     查看详情
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-else id="no-results" class="hidden text-center py-12">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">没有找到相关脚本</h3>
-                    <p class="mt-1 text-sm text-gray-500">请尝试其他关键词进行搜索。</p>
-                </div>
-            </div>
-
-            <!-- Script details page -->
-            <div v-if="page === 'detail'" id="script-details-page" class="bg-white shadow rounded-lg p-6 flex flex-wrap">
-                <div class="w-full md:w-3/5 pr-3">
-                    <button id="back-button"  @click="goBackHome"
-                            class="mb-6 inline-flex items-center px-3 py-1 border border-transparent rounded-md text-sm font-medium text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                        </svg>
-                        返回列表
-                    </button>
-
-                    <div v-if="!activeProject" id="script-loading" class="flex justify-center py-12">
-                        <div class="loading"></div>
-                        <span class="ml-2 text-gray-700">正在加载脚本详情...</span>
-                    </div>
-
-                    <div v-else id="script-details-container" >
-                        <div class="flex flex-col md:flex-row justify-between mb-6">
-                            <div class="flex-1">
-                                <h1 id="script-title" class="text-2xl font-bold text-gray-900">{{ activeProject.name }}</h1>
-                                <p id="script-path" class="text-gray-500 mt-1">{{ activeProject.desc }}</p>
-                            </div>
-                            <div class="mt-4 md:mt-0 flex items-start w-30">
-                                <a id="github-link" href="#" @click="openProjectUrl"
-                                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                </a>
+                                <a :href="'https://github.com/other-blowsnow/qinglong-scripts/tree/master/' + script.path"
+                                   target="_blank"
+                                   class="inline-flex justify-center items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                                     </svg>
-                                    下载
                                 </a>
                             </div>
                         </div>
-
-                        <div class="bg-gray-50 p-4 rounded-md mb-6">
-<!--                            <h2 class="text-lg font-medium text-gray-900 mb-2">脚本信息</h2>-->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-500">语言</p>
-                                    <p class="text-sm font-medium text-gray-900">{{ activeProject.language }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">创建时间</p>
-                                    <p class="text-sm font-medium text-gray-900">{{ new Date(activeProject.createTime).toLocaleString() }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">最后更新</p>
-                                    <p class="text-sm font-medium text-gray-900">{{ new Date(activeProject.updateTime).toLocaleString() }}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-6">
-                            <h2 class="text-lg font-medium text-gray-900 mb-2">脚本介绍</h2>
-                            <div class="rounded-md">
-                                <pre id="script-content" class="markdown-body p-4 text-sm text-gray-800 overflow-x-auto" v-html="activeProjectContentHtml">
-                                </pre>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
-                <div class="w-full md:w-2/5">
-                    <giscus-widget
-                            repo="other-blowsnow/qinglong-scripts"
-                            repoId="R_kgDOOiwwFA"
-                            category="General"
-                            categoryId="DIC_kwDOOiwwFM4CpqWX"
-                            mapping="specific"
-                            :term="activeProject.path"
-                            strict="1"
-                            reactionsEnabled="1"
-                            emit-metadata="0"
-                            input-position="bottom"
-                            theme="preferred_color_scheme"
-                            lang="zh-CN"
-                            loading="lazy">
-                    </giscus-widget>
+                <div v-else class="text-center py-16 bg-white rounded-lg shadow">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="mt-2 text-lg font-medium text-gray-900">没有找到相关脚本</h3>
+                    <p class="mt-1 text-sm text-gray-500">请尝试其他关键词进行搜索。</p>
+                    <button @click="clearSearch" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200">
+                        清除搜索条件
+                    </button>
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
 
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 py-6 mt-auto">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <p class="text-center text-sm text-gray-500">
-                    脚本管理系统 © 2025 - <a href="https://github.com/other-blowsnow/qinglong-scripts" class="text-blue-600 hover:text-blue-500">GitHub</a>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500 mb-4 md:mb-0">
+                    脚本管理系统 © 2025
                 </p>
+                <div class="flex space-x-6">
+                    <a href="https://github.com/other-blowsnow/qinglong-scripts" target="_blank" class="text-gray-400 hover:text-gray-500">
+                        <span class="sr-only">GitHub</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+                        </svg>
+                    </a>
+                </div>
             </div>
-        </footer>
-    </div>
+        </div>
+    </footer>
+</div>
 
+<script>
+    const { createApp, ref, computed } = Vue
 
-    <script>
-        const { createApp, ref, computed } = Vue
+    createApp({
+        setup() {
+            const projects = ref([])
+            const searchProjectTerm = ref('')
 
-        createApp({
-            setup() {
-                const page = ref('home')
-                const projects = ref([])
-                const activeProject = ref(null)
-                const activeProjectContentHtml = computed(() => {
-                    if (!activeProject.value){
-                        return "";
-                    }
-                    return marked.parse(activeProject.value.content)
-                })
-                const searchProjectTerm = ref(null)
-                const filteredProjects = computed(() => {
-                    if (!searchProjectTerm.value) return projects.value
-                   return projects.value.filter(project =>
-                        project.name.toLowerCase().includes(searchProjectTerm.value) ||
-                        project.path.toLowerCase().includes(searchProjectTerm.value)
-                    );
-                })
+            const filteredProjects = computed(() => {
+                if (!searchProjectTerm.value) return projects.value
+                const searchTerm = searchProjectTerm.value.toLowerCase()
+                return projects.value.filter(project =>
+                    project.name.toLowerCase().includes(searchTerm) ||
+                    project.path.toLowerCase().includes(searchTerm) ||
+                    (project.desc && project.desc.toLowerCase().includes(searchTerm))
+                )
+            })
 
-                const fetchProjects = async () => {
-                    try {
-                        const apiUrl = `https://cdn.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json`;
-                        const response = await axios.get(apiUrl);
-                        return response.data;
-                    } catch (error) {
-                        console.error('Error fetching directory contents:', error);
-                        return [];
-                    }
-                }
+            const lastUpdateDate = computed(() => {
+                if (projects.value.length === 0) return '-'
+                const dates = projects.value.map(p => new Date(p.updateTime))
+                const maxDate = new Date(Math.max.apply(null, dates))
+                return maxDate.toLocaleString('zh-CN')
+            })
 
-                const showProjectDetails = (project) => {
-                    activeProject.value = project
-                    page.value = 'detail'
-
-                    location.hash = '#project&path='+project.path;
-                }
-
-                const goBackHome = () => {
-                    activeProject.value = null
-                    page.value = 'home'
-                }
-
-                const openProjectUrl = () => {
-                    window.open("https://github.com/other-blowsnow/qinglong-scripts/tree/master/" + activeProject.value.path, '_blank');
-                }
-
-                // 初始化页面
-                const initPage = async () => {
-                    projects.value = await fetchProjects();
-
-                    if (location.hash.startsWith('#project')){
-                        let params = new URLSearchParams(location.hash.substring(1));
-                        let path = params.get("path")
-                        console.log('showScriptDetails', path);
-                        if (path){
-                            let project = projects.value.find(item => item.path === path)
-                            if (project){
-                                showProjectDetails(project)
-                            } else {
-                                console.error('Project not found:', path);
-                            }
-                        }
-                    }
-                }
-
-                initPage();
-
-                return {
-                    page,
-                    projects,
-                    filteredProjects,
-                    searchProjectTerm,
-                    activeProject,
-                    activeProjectContentHtml,
-
-                    openProjectUrl,
-                    showProjectDetails,
-                    goBackHome
+            const fetchProjects = async () => {
+                try {
+                    const apiUrl = `https://cdn.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json`
+                    const response = await axios.get(apiUrl)
+                    return response.data
+                } catch (error) {
+                    console.error('Error fetching projects:', error)
+                    return []
                 }
             }
-        }).mount('#app')
 
-    </script>
+            const clearSearch = () => {
+                searchProjectTerm.value = ''
+            }
+
+            const formatDate = (timestamp) => {
+                const date = new Date(timestamp)
+                const now = new Date()
+
+                // Calculate the difference in days
+                const diffTime = Math.abs(now - date)
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+                if (diffDays <= 7) {
+                    // For dates within the last week, show relative time
+                    if (diffDays === 0) return '今天'
+                    if (diffDays === 1) return '昨天'
+                    return `${diffDays}天前`
+                } else {
+                    // For older dates, show YYYY-MM-DD format
+                    return date.toLocaleDateString('zh-CN')
+                }
+            }
+
+            const getLanguageColor = (language) => {
+                const colors = {
+                    'JavaScript': 'bg-yellow-500',
+                    'Python': 'bg-blue-500',
+                    'Shell': 'bg-green-500',
+                    'Java': 'bg-red-500',
+                    'C#': 'bg-purple-500',
+                    'PHP': 'bg-indigo-500',
+                    'TypeScript': 'bg-blue-600',
+                    'Ruby': 'bg-red-600',
+                    'Go': 'bg-blue-400',
+                }
+
+                return colors[language] || 'bg-gray-500'
+            }
+
+            // Initialize
+            fetchProjects().then(data => {
+                projects.value = data
+            })
+
+            return {
+                projects,
+                filteredProjects,
+                searchProjectTerm,
+                lastUpdateDate,
+                clearSearch,
+                formatDate,
+                getLanguageColor
+            }
+        }
+    }).mount('#app')
+</script>
 </body>
 </html>
