@@ -4,8 +4,15 @@ const path = require('path');
 const {buildProjectInfo, projectJsonPath, historyProjects, buildProjects} = require("./utils");
 
 
+console.log('process.argv', process.argv);
+
 // 从参数里面获取项目路径
 const name = process.argv[2];
+
+if (!name){
+    console.error("没有传入项目路径");
+    process.exit(1);
+}
 
 console.log("开始构建", name);
 
