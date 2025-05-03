@@ -124,7 +124,7 @@
                                     <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
                                     </svg>
-                                    <span>{{ formatDate(script.updateTime) }}</span>
+                                    <span>{{ formatDate(script.updateTime, true) }}</span>
                                 </div>
                                 <div class="flex items-center">
                                     <svg class="h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -226,22 +226,27 @@
                 searchProjectTerm.value = ''
             }
 
-            const formatDate = (timestamp) => {
+            const formatDate = (timestamp, showTime = false) => {
+                if (!timestamp) return '-'
                 const date = new Date(timestamp)
-                const now = new Date()
 
-                // Calculate the difference in days
-                const diffTime = Math.abs(now - date)
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-                if (diffDays <= 7) {
-                    // For dates within the last week, show relative time
-                    if (diffDays === 0) return '今天'
-                    if (diffDays === 1) return '昨天'
-                    return `${diffDays}天前`
+                if (showTime) {
+                    return date.toLocaleString('zh-CN')
                 } else {
-                    // For older dates, show YYYY-MM-DD format
-                    return date.toLocaleDateString('zh-CN')
+                    const now = new Date()
+                    // Calculate the difference in days
+                    const diffTime = Math.abs(now - date)
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+                    if (diffDays <= 7) {
+                        // For dates within the last week, show relative time
+                        if (diffDays === 0) return '今天'
+                        if (diffDays === 1) return '昨天'
+                        return `${diffDays}天前`
+                    } else {
+                        // For older dates, show YYYY-MM-DD format
+                        return date.toLocaleDateString('zh-CN')
+                    }
                 }
             }
 
