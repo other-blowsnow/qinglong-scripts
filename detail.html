@@ -358,7 +358,7 @@
                     const now = new Date()
                     // Calculate the difference in days
                     const diffTime = Math.abs(now - date)
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
                     if (diffDays <= 7) {
                         // For dates within the last week, show relative time
