@@ -92,8 +92,8 @@ function buildProjectsTable(projects){
         + `\n| --- | --- | --- | --- |\n`;
     let table = '';
     for (const project of projects) {
-        const createTime = new Date(project.createTime).toLocaleString();
-        const updateTime = new Date(project.updateTime).toLocaleString();
+        const createTime = new Date(project.createTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+        const updateTime = new Date(project.updateTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
         table += `| [${project.name}](${project.path}) | ${project.desc} | ${createTime} | ${updateTime} |\n`;
     }
     tableMd = tableMd + table;
