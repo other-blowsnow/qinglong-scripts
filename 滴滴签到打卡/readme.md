@@ -1,0 +1,13 @@
+## 功能
+滴滴签到打卡领券周末5折、福利金领取、瓜瓜乐活动参加
+
+## 使用方法
+- 捉任意*.xiaojukeji.com的包，获取body里的uid和token
+- 环境变量 ddgyToken='uid&token'，多账号使用@隔开
+
+## 来源
+https://github.com/linbailo/zyqinglong
+
+————————————————————————
+
+[滴滴签到.zip](https://github.com/user-attachments/files/20022877/default.zip)
