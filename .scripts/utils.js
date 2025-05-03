@@ -83,6 +83,8 @@ function buildProjects(projects){
     });
     // 生成文件
     fs.writeFileSync(projectJsonPath, JSON.stringify(projects), 'utf-8');
+    console.log('生成项目文件', projectJsonPath);
+
     // 生成项目表格
     buildProjectsTable(projects);
 }
