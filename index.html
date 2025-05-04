@@ -215,7 +215,7 @@
 
             const fetchProjects = async () => {
                 try {
-                    const apiUrl = `https://cdn.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json?t=${Date.now()}`
+                    const apiUrl = `./project.json?t=${Date.now()}`
                     const response = await axios.get(apiUrl)
                     return response.data
                 } catch (error) {
