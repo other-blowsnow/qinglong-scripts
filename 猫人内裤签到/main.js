@@ -51,7 +51,6 @@ class Api {
             })
             .then(res => res.json())
             .then(res => {
-                console.log('res', res);
                 if (res.code !== 200) {
                     throw new Error("请求失败：" + res.error.message);
                 }
