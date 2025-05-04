@@ -5,5 +5,8 @@
 - 打开 “雀巢会员俱乐部” 小程序，抓包域名 crm.nestlechinese.com ，找 请求头 里面有 authorization 的值，包含 Bearer开头
 - 设置环境变量，QCHYJLB_TOKEN='上面回去的authorization'，多个账号使用 @分割
 
+## 其他
+测试国外网络不支持使用
+
 ## 来源
 网络
