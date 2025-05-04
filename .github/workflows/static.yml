@@ -9,6 +9,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  workflow_run:
+    workflows: [ "构建项目文件", "Issue Close Handler" ]  # Ensure this matches the name of the workflow from Branch A
+    types:
+      - completed  # Trigger when the workflow on Branch A completes
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -31,7 +36,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with: 
+        with:
           ref: page
       - name: Setup Pages
         uses: actions/configure-pages@v5
