@@ -33,7 +33,7 @@ jobs:
       run: |
         cp project.json /tmp/project.json
         # 切换分支
-        git fetch origin page:page
+        git fetch origin page
         git checkout page
         cp /tmp/project.json .
         git diff --quiet || (git add . && git commit -m "自动构建项目文件" && git push origin page)
