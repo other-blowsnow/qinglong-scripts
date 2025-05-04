@@ -128,8 +128,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: refresh cache
+      - name: Commit Github Page Project Files
+        if: env.continue_process == 'true'
         run: |
-          sleep 30
-          echo "延迟10秒..."
-          curl "https://purge.jsdelivr.net/gh/other-blowsnow/qinglong-scripts/project.json"
+          cp project.json /tmp/project.json
+          # 切换分支
+          git checkout page
+          cp /tmp/project.json .
+          git diff --quiet || (git add . && git commit -m "自动构建项目文件" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
