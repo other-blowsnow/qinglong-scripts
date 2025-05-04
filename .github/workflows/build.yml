@@ -36,6 +36,6 @@ jobs:
         git fetch origin page
         git checkout page
         cp /tmp/project.json .
-        git diff --quiet || (git add . && git commit -m "自动构建项目文件" && git push origin page)
+        git add . && git commit -m "自动构建项目文件" && git push origin page
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
