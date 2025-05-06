@@ -12,7 +12,7 @@ ql repo https://github.com/other-blowsnow/qinglong-scripts.git "" "\.scripts"
 链接：https://github.com/other-blowsnow/qinglong-scripts.git
 定时类型：crontab
 黑名单：\.scripts
-定时规则：0 30 * * * *
+定时规则：30 0 * * *
 文件后缀：py js
 ```
 
