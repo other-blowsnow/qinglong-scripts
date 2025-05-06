@@ -56,32 +56,48 @@ class Api {
     }
 }
 
+async function run(handler){
+    // 分割token，使用分割符 @#
+    const tokens = envToken.split('@');
+
+    console.log("=====共获取到 " + (tokens.length) + "个账号=====");
+
+    for (let i = 0; i < tokens.length; i++) {
+        console.log("=====开始执行第 " + (i + 1) + "个账号=====");
+        const token = tokens[i].trim();
+        try {
+            let message = await handler(token);
+            console.log("执行成功✅", message);
+            if (typeof QLAPI !== 'undefined') {
+                QLAPI.systemNotify({
+                    "title": `${envName}执行成功`,
+                    "content": `第${i + 1}个账号，${message}`
+                })
+            }
+        } catch (e) {
+            console.error("执行失败❌", e)
+            if (typeof QLAPI !== 'undefined') {
+                QLAPI.systemNotify({"title": `${envName}执行失败`, "content": e.message})
+            }
+        }
+
+        console.log("=====结束执行第 " + (i + 1) + "个账号=====");
+    }
+}
+
 async function main() {
     if (!envToken) {
         console.error(`请设置环境变量${envTokenName}`);
         return;
     }
-    // 分割token，使用分割符 @#
-    const tokens = envToken.split('@');
-    for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i].trim();
+    await run(async (token) => {
         const api = new Api(token)
-        try {
-            let point = await api.sign()
-            console.log("签到成功", i + 1, point);
-            if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({
-                    "title": `${envName}签到成功`,
-                    "content": `第${i + 1}个账号, 积分：${point}`
-                })
-            }
-        } catch (e) {
-            console.error("签到失败", i + 1, e)
-            if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": `${envName}签到失败`, "content": e.message})
-            }
-        }
-    }
+
+        let point = await api.sign()
+
+        return "签到奖励积分：" + point;
+    })
+
 }
 
 

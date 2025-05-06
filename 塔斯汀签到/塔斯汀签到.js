@@ -105,38 +105,54 @@ class Api{
 
 }
 
-async function run() {
+async function run(handler){
+    // 分割token，使用分割符 @#
+    const tokens = envToken.split('@');
+
+    console.log("=====共获取到 " + (tokens.length) + "个账号=====");
+
+    for (let i = 0; i < tokens.length; i++) {
+        console.log("=====开始执行第 " + (i + 1) + "个账号=====");
+        const token = tokens[i].trim();
+        try {
+            let message = await handler(token);
+            console.log("执行成功✅", message);
+            if (typeof QLAPI !== 'undefined') {
+                QLAPI.systemNotify({
+                    "title": `${envName}执行成功`,
+                    "content": `第${i + 1}个账号，${message}`
+                })
+            }
+        } catch (e) {
+            console.error("执行失败❌", e)
+            if (typeof QLAPI !== 'undefined') {
+                QLAPI.systemNotify({"title": `${envName}执行失败`, "content": e.message})
+            }
+        }
+
+        console.log("=====结束执行第 " + (i + 1) + "个账号=====");
+    }
+}
+
+async function main() {
     if (!envToken){
         console.error(`请设置环境变量${envTokenName}`);
         return;
     }
-    // 分割token，使用分割符 @#
-    const tokens = envToken.split('@');
-    for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i].trim();
-        try {
-            const api =  new Api(token)
 
-            const activityId = await api.getSignActivityId();
-            console.log("获取签到活动ID：", activityId);
+    await run(async (token) => {
+        const api = new Api(token)
+        const activityId = await api.getSignActivityId();
+        console.log("获取签到活动ID：", activityId);
 
-            const memberInfo = await api.getMemberDetail();
+        const memberInfo = await api.getMemberDetail();
 
-            await api.sign(activityId, memberInfo.nickName, memberInfo.phone);
+        await api.sign(activityId, memberInfo.nickName, memberInfo.phone);
 
-            const point = await api.getMyPoint();
-            console.log("当前积分：", point);
+        const point = await api.getMyPoint();
 
-            if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": `${envName}成功`, "content": `第${i + 1}个账号，当前积分：${point}`})
-            }
-        } catch (e) {
-            if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": `${envName}失败`, "content": `第${i + 1}个账号签到失败，错误内容：` + e.message})
-            }
-            console.error("签到失败",e)
-        }
-    }
+        return "签到成功，当前积分：" + point;
+    })
 }
 
-run()
+main()
