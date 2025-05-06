@@ -93,7 +93,7 @@ async function main() {
         return;
     }
 
-    await run(async () => {
+    await run(async (token) => {
         const api = new Api(token)
 
         let point = await api.sign()
