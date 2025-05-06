@@ -1,6 +1,14 @@
+/**
+ * name: 猫人内裤签到
+ * cron: 10 0 * * *
+ * 环境变量：MRNK_TOKEN = accessToken
+ */
 const crypto = require('crypto');
 
-const envToken = process.env.MRNK_TOKEN;
+const envName = "猫人内裤"
+const envTokenName = "MRNK_TOKEN"
+const envToken = process.env[envTokenName];
+
 
 class Api {
 
@@ -81,7 +89,7 @@ class Api {
 
 async function main() {
     if (!envToken) {
-        console.error("请设置环境变量MRNK_TOKEN");
+        console.error(`请设置环境变量${envTokenName}`);
         return;
     }
     // 分割token，使用分割符 @#
@@ -94,14 +102,14 @@ async function main() {
             console.log("签到成功", i + 1);
             if (typeof QLAPI !== 'undefined') {
                 QLAPI.systemNotify({
-                    "title": "猫人签到成功",
+                    "title": `${envName}签到成功`,
                     "content": `第${i + 1}个账号`
                 })
             }
         } catch (e) {
             console.error("签到失败", i + 1, e)
             if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": "猫人签到失败", "content": e.message})
+                QLAPI.systemNotify({"title": `${envName}签到失败`, "content": e.message})
             }
         }
     }

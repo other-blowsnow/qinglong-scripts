@@ -1,3 +1,8 @@
+/**
+ * name: 可口可乐吧
+ * cron: 10 0 * * *
+ * 环境变量：KKKLB_TOKEN = authorization
+ */
 const envName = "可口可乐吧"
 const envTokenName = "KKKLB_TOKEN"
 const envToken = process.env[envTokenName];

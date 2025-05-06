@@ -1,4 +1,11 @@
-const hzhToken = process.env.HZH_TOKEN;
+/**
+ * name: 华住会签到
+ * cron: 10 0 * * *
+ * 环境变量：HZH_TOKEN = userToken
+ */
+const envName = "华住会签到"
+const envTokenName = "HZH_TOKEN"
+const envToken = process.env[envTokenName];
 
 class Api {
 
@@ -52,12 +59,12 @@ class Api {
 }
 
 async function main() {
-    if (!hzhToken) {
-        console.error("请设置环境变量HZH_TOKEN");
+    if (!envToken) {
+        console.error(`请设置环境变量${envTokenName}`);
         return;
     }
     // 分割token，使用分割符 @#
-    const tokens = hzhToken.split('@');
+    const tokens = envToken.split('@');
     for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i].trim();
         const api = new Api(token)
@@ -66,14 +73,14 @@ async function main() {
             console.log("签到成功", i + 1, point);
             if (typeof QLAPI !== 'undefined') {
                 QLAPI.systemNotify({
-                    "title": "华住会签到成功",
+                    "title": `${envName}成功`,
                     "content": `第${i + 1}个账号，签到积分：${point}`
                 })
             }
         } catch (e) {
             console.error("签到失败", i + 1, e)
             if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": "华住会签到失败", "content": e.message})
+                QLAPI.systemNotify({"title": `${envName}签到失败`, "content": e.message})
             }
         }
     }

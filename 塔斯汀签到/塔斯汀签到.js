@@ -1,4 +1,12 @@
-const tstToken = process.env.TST_TOKEN;
+/**
+ * name: 塔斯汀签到
+ * cron: 10 0 * * *
+ * 环境变量：TST_TOKEN = user-token
+ */
+const envName = "塔斯汀签到"
+const envTokenName = "TST_TOKEN"
+const envToken = process.env[envTokenName];
+
 const version = "3.16.0";
 
 class Api{
@@ -98,12 +106,12 @@ class Api{
 }
 
 async function run() {
-    if (!tstToken){
-        console.error("请设置环境变量TST_TOKEN");
+    if (!envToken){
+        console.error(`请设置环境变量${envTokenName}`);
         return;
     }
     // 分割token，使用分割符 @#
-    const tokens = tstToken.split('@');
+    const tokens = envToken.split('@');
     for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i].trim();
         try {
@@ -120,11 +128,11 @@ async function run() {
             console.log("当前积分：", point);
 
             if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": "塔斯汀签到成功", "content": `第${i + 1}个账号，当前积分：${point}`})
+                QLAPI.systemNotify({"title": `${envName}成功`, "content": `第${i + 1}个账号，当前积分：${point}`})
             }
         } catch (e) {
             if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": "塔斯汀签到失败", "content": `第${i + 1}个账号签到失败，错误内容：` + e.message})
+                QLAPI.systemNotify({"title": `${envName}失败`, "content": `第${i + 1}个账号签到失败，错误内容：` + e.message})
             }
             console.error("签到失败",e)
         }

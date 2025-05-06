@@ -1,5 +1,8 @@
-
-
+/**
+ * name: 雀巢会员俱乐部
+ * cron: 10 0 * * *
+ * 环境变量：QCHYJLB_TOKEN = authorization
+ */
 const envName = "雀巢会员俱乐部"
 const envTokenName = "QCHYJLB_TOKEN"
 const envToken = process.env[envTokenName];

@@ -1,5 +1,8 @@
-
-
+/**
+ * name: 臭宝乐园签到
+ * cron: 10 0 * * *
+ * 环境变量：CBLY_TOKEN = authorization
+ */
 const envName = "臭宝乐园"
 const envTokenName = "CBLY_TOKEN"
 const envToken = process.env[envTokenName];

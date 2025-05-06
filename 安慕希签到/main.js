@@ -1,4 +1,11 @@
-const envToken = process.env.AMX_TOKEN;
+/**
+ * name: 安慕希签到
+ * cron: 10 0 * * *
+ * 环境变量：AMX_TOKEN = access-token
+ */
+const envName = "安慕希签到"
+const envTokenName = "AMX_TOKEN"
+const envToken = process.env[envTokenName];
 
 class Api {
 
@@ -52,7 +59,7 @@ class Api {
 
 async function main() {
     if (!envToken) {
-        console.error("请设置环境变量AMX_TOKEN");
+        console.error(`请设置环境变量${envTokenName}`);
         return;
     }
     // 分割token，使用分割符 @#
@@ -65,14 +72,14 @@ async function main() {
             console.log("签到成功", i + 1, point);
             if (typeof QLAPI !== 'undefined') {
                 QLAPI.systemNotify({
-                    "title": "安慕希签到成功",
+                    "title": `${envName}成功`,
                     "content": `第${i + 1}个账号，签到积分：${point}`
                 })
             }
         } catch (e) {
             console.error("签到失败", i + 1, e)
             if (typeof QLAPI !== 'undefined') {
-                QLAPI.systemNotify({"title": "安慕希签到失败", "content": e.message})
+                QLAPI.systemNotify({"title": `${envName}失败`, "content": e.message})
             }
         }
     }
