@@ -63,11 +63,20 @@ function buildProjectInfo(name){
     if (historyProjectObjects[name] && historyProjectObjects[name].updateTime) {
         updateTime = historyProjectObjects[name].updateTime;
     }
+
+    let status =  '正常';
+    if (fs.existsSync(path.join(baseDir, 'error'))){
+        status = fs.readFileSync(path.join(baseDir, 'error'), 'utf-8');
+        status = status.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+        status = status.replaceAll('\n', '');
+    }
+
     return {
         name: name,
         desc: desc,
         content: readme,
         icon: icon,
+        status: status,
         language: projectLanguage,
         path: name,
         // 生成时间，如果有就别改了
@@ -90,13 +99,12 @@ function buildProjects(projects){
 }
 
 function buildProjectsTable(projects){
-    let tableMd = `| 项目名称 | 项目描述 | 创建时间 | 更新时间 |`
+    let tableMd = `| 项目名称 | 项目描述 | 状态 | 更新时间 |`
         + `\n| --- | --- | --- | --- |\n`;
     let table = '';
     for (const project of projects) {
-        const createTime = new Date(project.createTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
         const updateTime = new Date(project.updateTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-        table += `| [${project.name}](${project.path}) | ${project.desc} | ${createTime} | ${updateTime} |\n`;
+        table += `| [${project.name}](${project.path}) | ${project.desc} | ${project.status} | ${updateTime} |\n`;
     }
     tableMd = tableMd + table;
 
